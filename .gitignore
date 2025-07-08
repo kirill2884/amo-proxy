@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Vercel
+.vercel/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Firebase Functions (если используешь Firebase локально)
+firebase-debug.log
+firestore.indexes.json
+firestore.rules
+
+# Vercel build artifacts
+dist/
