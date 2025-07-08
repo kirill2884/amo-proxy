@@ -1,5 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { kv } from '@vercel/kv';
+import { createClient } from 'redis';
+
+const redis = createClient({
+  url: process.env.REDIS_URL,
+});
+
+redis.connect();
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const code = req.query.code as string;
@@ -12,7 +18,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   } = process.env;
 
   if (!code || !CLIENT_AMO_ID || !CLIENT_AMO_SECRET || !REDIRECT_AMO_URI || !AMOCRM_SUBDOMAIN) {
-    return res.status(400).send('Require parametrs not fond');
+    return res.status(400).send('Required parameters not found');
   }
 
   try {
@@ -38,13 +44,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const tokenData = await response.json();
     const { access_token, refresh_token, expires_in } = tokenData;
 
-    await kv.set('amo_tokens', {
+    await redis.set('amo_tokens', JSON.stringify({
       access_token,
       refresh_token,
-      expires_at: Date.now() + expires_in * 1000
-    });
+      expires_at: Date.now() + expires_in * 1000,
+    }));
 
-    res.send('Authorization sucsefull tokens saved in KV.');
+    res.send('Authorization successful, tokens saved in Redis.');
   } catch (err: any) {
     res.status(500).send('Error: ' + err.message);
   }
