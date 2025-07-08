@@ -21,7 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       tokens,
     });
   } catch (error) {
-    console.error('Ошибка при получении токенов:', error);
-    res.status(500).send('Ошибка при обмене code на токен');
+    console.error('Error process getting tokens:', error);
+    res.status(500).send('Error process getting tokens');
   }
 }
