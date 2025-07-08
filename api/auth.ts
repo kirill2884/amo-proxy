@@ -9,8 +9,8 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   );
 
   const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline', // обязательно!
-    prompt: 'consent', // обязательно для получения refresh_token
+    access_type: 'offline', 
+    prompt: 'consent', 
     scope: ['https://www.googleapis.com/auth/spreadsheets'],
   });
 
