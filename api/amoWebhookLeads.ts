@@ -5,7 +5,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
-
+  
+  console.log("Получен Webhook от amoCRM:", JSON.stringify(req.body, null, 2));
   const body = req.body;
 
   // Безопасная проверка тела запроса
