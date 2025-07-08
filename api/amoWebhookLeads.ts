@@ -54,6 +54,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
 
   try {
+
+    const existing = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID!,
+      range: 'leads!A2:A',
+    });
+
+    const existingIds = (existing.data.values || []).flat().map(String);
+
+    if (existingIds.includes(dealId)) {
+      console.log(`Leads ${dealId} already exists`);
+      return res.status(200).send('Already exists');
+    }
+
     await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID!,
       range: 'leads!A2',
