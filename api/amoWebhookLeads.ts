@@ -5,7 +5,8 @@ import getRawBody from 'raw-body';
 import dayjs from 'dayjs'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method !== 'POST') {
+  
+    if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
 
@@ -33,8 +34,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const dealId = lead?.id;
   const createdAt = dayjs.unix(Number(lead.created_at)).format('YYYY-MM-DD HH:mm');
-  const contactName = contact?.name || '';
-  const responsible = lead?.responsible_user_name || '';
   const responsibleId = lead?.responsible_user_id || '';
 
   const {
@@ -52,7 +51,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   );
 
   oauth2Client.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
-
   const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
 
   try {
@@ -65,17 +63,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           dealId,
           createdAt,
           phone,
-          contactName,
-          responsible,
+          '',
+          '',
           responsibleId
         ]],
       },
     });
 
-    console.log('Сделка добавлена:', dealId);
+    console.log('Lead added succsefull:', dealId);
     res.status(200).send('OK');
   } catch (error) {
-    console.error('Ошибка при добавлении в таблицу:', error);
-    res.status(500).send('Ошибка записи в Google Таблицу');
+    console.error('Error process add:', error);
+    res.status(500).send('Error writing to Google sheet');
   }
 }

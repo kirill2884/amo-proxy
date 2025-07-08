@@ -17,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log('refresh_token:', tokens.refresh_token);
 
     res.status(200).json({
-      message: 'Токены получены.',
+      message: 'Succsefull',
       tokens,
     });
   } catch (error) {
