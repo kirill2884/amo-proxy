@@ -79,6 +79,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         phone = phoneField?.values?.[0]?.value || '';
     }
 
+    let responsibleName = '';
+
+    if (responsibleId) {
+    const userRes = await fetch(`https://${AMOCRM_SUBDOMAIN}.amocrm.ru/api/v4/users/${responsibleId}`, {
+        headers: {
+        Authorization: `Bearer ${accessToken}`
+        }
+    });
+
+    const userData = await userRes.json();
+    responsibleName = userData.name;
+    }
+
   oauth2Client.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
   const sheets = google.sheets({ version: 'v4', auth: oauth2Client });
 
@@ -106,7 +119,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           createdAt,
           phone,
           contactName,
-          '',
+          responsibleName,
           responsibleId
         ]],
       },
