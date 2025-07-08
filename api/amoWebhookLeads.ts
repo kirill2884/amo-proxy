@@ -1,12 +1,23 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import { google } from 'googleapis';
+import qs from 'qs';
+import getRawBody from 'raw-body';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).send('Method Not Allowed');
   }
-  
-  console.log("Получен Webhook от amoCRM:", JSON.stringify(req.body, null, 2));
+
+  let parsed: any;
+
+    if (req.headers['content-type'] === 'application/x-www-form-urlencoded') {
+        const raw = await getRawBody(req);
+        parsed = qs.parse(raw.toString());
+    } else {
+        parsed = req.body;
+    }
+
+  console.log("Получен Webhook от amoCRM:", JSON.stringify(parsed, null, 2));
   const body = req.body;
 
   // Безопасная проверка тела запроса
