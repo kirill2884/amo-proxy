@@ -1,15 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { createClient } from 'redis';
-
-const redis = createClient({
-  url: process.env.REDIS_URL,
-});
-
-redis.connect();
+import { getRedisClient } from '../utils/Redis';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const code = req.query.code as string;
 
+  const redis = await getRedisClient();  
   const {
     CLIENT_AMO_ID,
     CLIENT_AMO_SECRET,
