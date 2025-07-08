@@ -2,6 +2,7 @@ import { VercelRequest, VercelResponse } from '@vercel/node';
 import { google } from 'googleapis';
 import qs from 'qs';
 import getRawBody from 'raw-body';
+import dayjs from 'dayjs'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
@@ -18,21 +19,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
   console.log("Получен Webhook от amoCRM:", JSON.stringify(parsed, null, 2));
-  const body = req.body;
 
-  // Безопасная проверка тела запроса
-  const lead = body?.leads?.add?.[0];
+  const lead = parsed?.leads?.add?.[0];
+
+    if (!lead) {
+        console.warn("Сделка не найдена в Webhook:", JSON.stringify(parsed, null, 2));
+        return res.status(400).send("Invalid lead data");
+    }
+
   const contact = lead?.contacts?.[0];
   const phoneField = contact?.custom_fields_values?.find((f: any) => f.field_code === 'PHONE');
   const phone = phoneField?.values?.[0]?.value || '';
 
   const dealId = lead?.id;
-  const createdAt = lead?.created_at;
+  const createdAt = dayjs.unix(Number(lead.created_at)).format('YYYY-MM-DD HH:mm');
   const contactName = contact?.name || '';
   const responsible = lead?.responsible_user_name || '';
   const responsibleId = lead?.responsible_user_id || '';
 
-  // ⚙️ Google OAuth 2.0
   const {
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
