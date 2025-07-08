@@ -3,8 +3,8 @@ import { google } from 'googleapis';
 import dayjs from 'dayjs';
 import { getAccessToken } from '../utils/AuthUtils';
 import { fetchContact, fetchLead, fetchUser } from '../lib/amo';
-import { appendLeadToSheet } from '../lib/GoogleSheets';
 import { parseAmoWebhook } from '../lib/parseAmoWebhook';
+import { appendLeadToSheet } from '../lib/googleSheets';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (req.method !== 'POST') return res.status(405).send('Method Not Allowed');
